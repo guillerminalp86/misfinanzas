@@ -168,10 +168,10 @@
       </div>
       <div class="filters">
         <select id="f-mes" onchange="renderTabla()"><option value="">Todos los meses</option></select>
-        <select id="f-cat" onchange="renderTabla()"><option value="">Todas las categorías</option><option>Personal</option><option>Comida</option><option>Casa</option><option>Auto</option><option>Roque</option><option>Olivia</option></select>
-        <select id="f-forma" onchange="renderTabla()"><option value="">Todas las formas de pago</option><option>Tarjeta de crédito</option><option>Tarjeta de débito</option><option>Efectivo</option><option>Transferencia</option></select>
-        <select id="f-tipo" onchange="renderTabla()"><option value="">Todos los tipos</option><option>Fijo</option><option>Variable</option><option>Extraordinario</option></select>
-        <select id="f-persona" onchange="renderTabla()"><option value="">Todas las personas</option><option>Guille</option><option>Sofi</option><option>Edu</option><option>Silvia</option><option>Agustin</option></select>
+        <select id="f-cat" onchange="renderTabla()"><option value="">Todas las categorías</option><option>Personal</option><option>Comida</option><option>Casa</option><option>Auto</option><option>Roque</option><option>Olivia</option><option>Vacaciones</option></select>
+        <select id="f-forma" onchange="renderTabla()"><option value="">Todas las formas de pago</option><option>Galicia</option><option>Frances</option><option>Cash</option><option>Debito</option></select>
+        <select id="f-tipo" onchange="renderTabla()"><option value="">Todos los tipos</option><option>Fijo</option><option>Variable</option></select>
+        <select id="f-persona" onchange="renderTabla()"><option value="">Todas las personas</option><option>Guille</option><option>Sofi</option><option>Edu</option><option>Silvia</option><option>Agus</option></select>
         <select id="f-estado" onchange="renderTabla()"><option value="">Todos los estados</option><option>Pagado</option><option>Pendiente</option></select>
         <input class="filter-tag-input" id="f-tag" placeholder="Buscar etiqueta..." oninput="renderTabla()">
       </div>
@@ -219,16 +219,16 @@
           <div class="fg"><label>Fecha del gasto</label><input type="date" id="n-fecha" oninput="calcCuotaPreview()"></div>
           <div class="fg"><label id="n-monto-label">Monto (ARS)</label><input type="number" id="n-monto" placeholder="0" oninput="calcCuotaPreview();updateUSDPreview()"></div>
           <div class="fg"><label>Equivalente USD MEP</label><input type="text" id="n-usd" readonly style="color:var(--text2)"></div>
-          <div class="fg"><label>Categoría</label><select id="n-cat"><option>Personal</option><option>Comida</option><option>Casa</option><option>Auto</option><option>Roque</option><option>Olivia</option></select></div>
+          <div class="fg"><label>Categoría</label><select id="n-cat"><option>Personal</option><option>Comida</option><option>Casa</option><option>Auto</option><option>Roque</option><option>Olivia</option><option>Vacaciones</option></select></div>
           <div class="fg"><label>Rubro</label><select id="n-rubro"><option value="">— elegir rubro —</option><option>Ahorro</option><option>Auto</option><option>Carniceria</option><option>Casa</option><option>Cotillon</option><option>Cumple 40</option><option>Deco</option><option>Dietetica</option><option>Educación</option><option>Entrenamiento</option><option>Impuestos</option><option>Jardin</option><option>Mantenimiento</option><option>Nafta</option><option>Online</option><option>Peaje</option><option>Peluqueria</option><option>Perfumeria</option><option>Pasteleria</option><option>Recitales</option><option>Regalo</option><option>Ropa</option><option>Salidas</option><option>Servicios</option><option>Supermercado</option><option>Suscripciones</option><option>Transporte</option><option>Vacaciones</option><option>Verduleria</option></select></div>
           <div class="fg" style="grid-column:span 2">
             <label>Etiquetas <span style="font-size:10px;color:var(--text3)">(separadas por coma)</span></label>
             <input type="text" id="n-tags" placeholder="Ej: viaje, cumple, escuela">
             <div class="tag-pills" id="tag-sugeridas"></div>
           </div>
-          <div class="fg"><label>Tipo de gasto</label><select id="n-tipo"><option>Fijo</option><option>Variable</option><option>Extraordinario</option></select></div>
-          <div class="fg"><label>Forma de pago</label><select id="n-forma" onchange="toggleCuotas()"><option>Tarjeta de crédito</option><option>Tarjeta de débito</option><option>Efectivo</option><option>Transferencia</option></select></div>
-          <div class="fg"><label>Persona</label><select id="n-persona"><option>Guille</option><option>Sofi</option><option>Edu</option><option>Silvia</option><option>Agustin</option></select></div>
+          <div class="fg"><label>Tipo de gasto</label><select id="n-tipo"><option>Fijo</option><option>Variable</option></select></div>
+          <div class="fg"><label>Forma de pago</label><select id="n-forma" onchange="toggleCuotas()"><option>Galicia</option><option>Frances</option><option>Cash</option><option>Debito</option></select></div>
+          <div class="fg"><label>Persona</label><select id="n-persona"><option>Guille</option><option>Sofi</option><option>Edu</option><option>Silvia</option><option>Agus</option></select></div>
           <div class="fg"><label>Estado</label><select id="n-estado"><option>Pagado</option><option>Pendiente</option></select></div>
           <div class="fg"><label>Tipo de movimiento</label><select id="n-mov"><option>Gasto</option><option>Ingreso</option></select></div>
         </div>
@@ -302,8 +302,8 @@ const API_URL=`https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}`;
 const HEADERS={'Authorization':`Bearer ${AIRTABLE_TOKEN}`,'Content-Type':'application/json'};
 const MESES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 const MESES_CORTO=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-const CATS=['Personal','Comida','Casa','Auto','Roque','Olivia'];
-const CAT_COLORS=['#7F77DD','#BA7517','#1D9E75','#378ADD','#D85A30','#D4537E'];
+const CATS=['Personal','Comida','Casa','Auto','Roque','Olivia','Vacaciones'];
+const CAT_COLORS=['#7F77DD','#BA7517','#1D9E75','#378ADD','#D85A30','#D4537E','#5DCAA5'];
 
 let cotizacion=1431,inflacionMensual=3.7,gastos=[],charts={},tarjetaCiclos={};
 let currentPage=1,monedaIngreso='ARS';
@@ -422,7 +422,7 @@ function renderHistorial(){
 function calcCuotaPreview(){
   const monto=montoEnARS(),cuotas=parseInt(document.getElementById('n-cuotas').value)||1;
   const fecha=document.getElementById('n-fecha').value,forma=document.getElementById('n-forma').value;
-  if(forma!=='Tarjeta de crédito'||!fecha||cuotas===1){document.getElementById('cuota-preview').innerHTML='';return}
+  if(forma!=='Galicia'&&forma!=='Frances'||!fecha||cuotas===1){document.getElementById('cuota-preview').innerHTML='';return}
   const montoC=Math.round(monto/cuotas),idxIni=MESES.indexOf(calcMesImpacto(fecha));
   let html=`<strong>Cuota: ${fmt(montoC)}/mes</strong><br>`;
   for(let i=0;i<cuotas;i++)html+=`Cuota ${i+1}/${cuotas} → <strong>${mesCorto(MESES[(idxIni+i)%12])}</strong>: ${fmt(montoC)}<br>`;
@@ -430,7 +430,7 @@ function calcCuotaPreview(){
 }
 
 function toggleCuotas(){
-  document.getElementById('cuotas-section').style.display=document.getElementById('n-forma').value==='Tarjeta de crédito'?'block':'none';
+  document.getElementById('cuotas-section').style.display=(document.getElementById('n-forma').value==='Galicia'||document.getElementById('n-forma').value==='Frances')?'block':'none';
   calcCuotaPreview();
 }
 
@@ -465,7 +465,7 @@ async function agregarGasto(){
     estado:document.getElementById('n-estado').value,mov:document.getElementById('n-mov').value,repInfl};
   try{
     const records=[];
-    if(forma==='Tarjeta de crédito'&&cuotas>1){
+    if((forma==='Galicia'||forma==='Frances')&&cuotas>1){
       const montoC=Math.round(monto/cuotas),idxIni=MESES.indexOf(calcMesImpacto(fechaVal)),rid='r'+Date.now();
       for(let i=0;i<cuotas;i++)records.push(buildAirtableRecord({...base,desc:`${base.desc} (${i+1}/${cuotas})`,mesImp:MESES[(idxIni+i)%12],monto:montoC,cuotas,cuotaN:i+1,repId:rid}));
     }else if(esRep){
@@ -595,7 +595,7 @@ function renderTabla(){
   const pageData=data.slice((currentPage-1)*PAGE_SIZE,currentPage*PAGE_SIZE);
   document.getElementById('page-info').textContent=`Pág. ${currentPage} / ${total}`;
   document.getElementById('btn-prev').disabled=currentPage<=1;document.getElementById('btn-next').disabled=currentPage>=total;
-  const cc={Personal:'bp',Comida:'bc',Casa:'bca',Auto:'bau',Roque:'brq',Olivia:'bol'};
+  const cc={Personal:'bp',Comida:'bc',Casa:'bca',Auto:'bau',Roque:'brq',Olivia:'bol',Vacaciones:'bca'};
   const tc={Fijo:'bfij',Variable:'bvar',Extraordinario:'bext'};
   document.getElementById('tabla-body').innerHTML=pageData.map(g=>`
     <tr>
