@@ -300,7 +300,8 @@ const BASE_ID='appImThaNasYeSo2A';
 const TABLE_ID='tbl7dKofgXjk8riMG';
 const API_URL=`https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}`;
 const HEADERS={'Authorization':`Bearer ${AIRTABLE_TOKEN}`,'Content-Type':'application/json'};
-const MESES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const MESES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const MESES_CORTO=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 const CATS=['Personal','Comida','Casa','Auto','Roque','Olivia'];
 const CAT_COLORS=['#7F77DD','#BA7517','#1D9E75','#378ADD','#D85A30','#D4537E'];
 
@@ -392,7 +393,9 @@ function montoEnARS(){
   return monedaIngreso==='USD'?Math.round(raw*cotizacion):raw;
 }
 
-function mesDesFecha(f){if(!f)return'Ene';return MESES[new Date(f+'T12:00:00').getMonth()]}
+function mesDesFecha(f){if(!f)return'Enero';return MESES[new Date(f+'T12:00:00').getMonth()]}
+
+function mesCorto(m){return MESES_CORTO[MESES.indexOf(m)]||m}
 
 function calcMesImpacto(fechaStr){
   const fecha=new Date(fechaStr+'T12:00:00');
@@ -422,7 +425,7 @@ function calcCuotaPreview(){
   if(forma!=='Tarjeta de crédito'||!fecha||cuotas===1){document.getElementById('cuota-preview').innerHTML='';return}
   const montoC=Math.round(monto/cuotas),idxIni=MESES.indexOf(calcMesImpacto(fecha));
   let html=`<strong>Cuota: ${fmt(montoC)}/mes</strong><br>`;
-  for(let i=0;i<cuotas;i++)html+=`Cuota ${i+1}/${cuotas} → <strong>${MESES[(idxIni+i)%12]}</strong>: ${fmt(montoC)}<br>`;
+  for(let i=0;i<cuotas;i++)html+=`Cuota ${i+1}/${cuotas} → <strong>${mesCorto(MESES[(idxIni+i)%12])}</strong>: ${fmt(montoC)}<br>`;
   document.getElementById('cuota-preview').innerHTML=html;
 }
 
@@ -555,8 +558,8 @@ function renderDashboard(){
   const tG=gM.reduce((a,g)=>a+g.monto,0),tI=iM.reduce((a,g)=>a+g.monto,0),bal=tI-tG;
   const cuotasFut=gastos.filter(g=>g.cuotas>1&&g.estado==='Pendiente').reduce((a,g)=>a+g.monto,0);
   document.getElementById('dash-metrics').innerHTML=`
-    <div class="metric"><div class="metric-label">Ingresos — ${mesSel}</div><div class="metric-value green">${fmt(tI)}</div><div class="metric-sub">${fmtUSD(tI)}</div></div>
-    <div class="metric"><div class="metric-label">Gastos — ${mesSel}</div><div class="metric-value red">${fmt(tG)}</div><div class="metric-sub">${fmtUSD(tG)}</div></div>
+    <div class="metric"><div class="metric-label">Ingresos — ${mesCorto(mesSel)}</div><div class="metric-value green">${fmt(tI)}</div><div class="metric-sub">${fmtUSD(tI)}</div></div>
+    <div class="metric"><div class="metric-label">Gastos — ${mesCorto(mesSel)}</div><div class="metric-value red">${fmt(tG)}</div><div class="metric-sub">${fmtUSD(tG)}</div></div>
     <div class="metric"><div class="metric-label">Balance</div><div class="metric-value ${bal>=0?'green':'red'}">${fmt(bal)}</div><div class="metric-sub">${fmtUSD(Math.abs(bal))}</div></div>
     <div class="metric"><div class="metric-label">Cuotas futuras</div><div class="metric-value">${fmt(cuotasFut)}</div><div class="metric-sub">${fmtUSD(cuotasFut)}</div></div>`;
   const byCat=CATS.map(c=>gM.filter(g=>g.cat===c).reduce((a,g)=>a+g.monto,0));
@@ -565,12 +568,13 @@ function renderDashboard(){
   const tot=byCat.reduce((a,b)=>a+b,0)||1;
   document.getElementById('legend-cat').innerHTML=CATS.map((c,i)=>`<span class="li"><span class="ld" style="background:${CAT_COLORS[i]}"></span>${c} ${Math.round(byCat[i]/tot*100)}%</span>`).join('');
   const mm=[...new Set(gastos.map(g=>g.mesImp))].filter(m=>MESES.includes(m)).sort((a,b)=>MESES.indexOf(a)-MESES.indexOf(b)).slice(-6);
+  const mmCorto=mm.map(m=>mesCorto(m));
   const gxm=mm.map(m=>gastos.filter(g=>g.mesImp===m&&g.mov==='Gasto').reduce((a,g)=>a+g.monto,0));
   const ixm=mm.map(m=>gastos.filter(g=>g.mesImp===m&&g.mov==='Ingreso').reduce((a,g)=>a+g.monto,0));
   if(charts.mes)charts.mes.destroy();
-  charts.mes=new Chart(document.getElementById('chart-mes'),{type:'line',data:{labels:mm,datasets:[{label:'Gastos',data:gxm,borderColor:'#E24B4A',backgroundColor:'rgba(226,75,74,0.07)',tension:0.3,fill:true,pointRadius:4},{label:'Ingresos',data:ixm,borderColor:'#1D9E75',backgroundColor:'rgba(29,158,117,0.07)',tension:0.3,fill:true,pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>'$'+Math.round(v/1000)+'k',font:{size:10}},grid:{color:'rgba(128,128,128,0.1)'}},x:{ticks:{autoSkip:false,font:{size:11}}}}}});
+  charts.mes=new Chart(document.getElementById('chart-mes'),{type:'line',data:{labels:mmCorto,datasets:[{label:'Gastos',data:gxm,borderColor:'#E24B4A',backgroundColor:'rgba(226,75,74,0.07)',tension:0.3,fill:true,pointRadius:4},{label:'Ingresos',data:ixm,borderColor:'#1D9E75',backgroundColor:'rgba(29,158,117,0.07)',tension:0.3,fill:true,pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>'$'+Math.round(v/1000)+'k',font:{size:10}},grid:{color:'rgba(128,128,128,0.1)'}},x:{ticks:{autoSkip:false,font:{size:11}}}}}});
   if(charts.bal)charts.bal.destroy();
-  charts.bal=new Chart(document.getElementById('chart-balance'),{type:'bar',data:{labels:mm,datasets:[{label:'Ingresos',data:ixm,backgroundColor:'#5DCAA5'},{label:'Gastos',data:gxm,backgroundColor:'#F09595'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{autoSkip:false,font:{size:11}}},y:{ticks:{callback:v=>'$'+Math.round(v/1000)+'k',font:{size:10}},grid:{color:'rgba(128,128,128,0.1)'}}}}}); 
+  charts.bal=new Chart(document.getElementById('chart-balance'),{type:'bar',data:{labels:mmCorto,datasets:[{label:'Ingresos',data:ixm,backgroundColor:'#5DCAA5'},{label:'Gastos',data:gxm,backgroundColor:'#F09595'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{autoSkip:false,font:{size:11}}},y:{ticks:{callback:v=>'$'+Math.round(v/1000)+'k',font:{size:10}},grid:{color:'rgba(128,128,128,0.1)'}}}}}); 
 }
 
 function renderTabla(){
@@ -586,7 +590,7 @@ function renderTabla(){
     return true;
   });
   const mMes=document.getElementById('f-mes');
-  if(mMes.options.length<=1)[...new Set(gastos.map(g=>g.mesImp))].forEach(m=>{const o=document.createElement('option');o.value=m;o.text=m;mMes.add(o)});
+  if(mMes.options.length<=1)[...new Set(gastos.map(g=>g.mesImp))].sort((a,b)=>MESES.indexOf(a)-MESES.indexOf(b)).forEach(m=>{const o=document.createElement('option');o.value=m;o.text=mesCorto(m);mMes.add(o)});
   const total=Math.max(1,Math.ceil(data.length/PAGE_SIZE));currentPage=Math.min(currentPage,total);
   const pageData=data.slice((currentPage-1)*PAGE_SIZE,currentPage*PAGE_SIZE);
   document.getElementById('page-info').textContent=`Pág. ${currentPage} / ${total}`;
@@ -597,7 +601,7 @@ function renderTabla(){
     <tr>
       <td title="${g.desc}">${g.desc}</td>
       <td>${g.fecha?g.fecha.slice(8)+'/'+g.fecha.slice(5,7):''}</td>
-      <td style="font-weight:500;color:#378ADD">${g.mesImp}</td>
+      <td style="font-weight:500;color:#378ADD">${mesCorto(g.mesImp)}</td>
       <td style="text-align:right;font-weight:500;color:${g.mov==='Ingreso'?'#0F6E56':'var(--text)'}">${g.mov==='Ingreso'?'+':''}${fmt(g.monto)}</td>
       <td style="text-align:right;font-size:11px;color:var(--text2)">${fmtUSD(g.monto)}</td>
       <td><span class="badge ${cc[g.cat]||''}">${g.cat}</span></td>
@@ -622,12 +626,13 @@ function renderAnual(){
   document.getElementById('annual-row').innerHTML=MESES.map(m=>{
     const v=gastos.filter(g=>g.mesImp===m&&g.mov==='Gasto').reduce((a,g)=>a+g.monto,0);
     const ok=mesesU.includes(m);
-    return`<div class="month-cell"><div class="mn">${m}</div><div class="mv ${ok?(v>400000?'red':''):''}">${ok?'$'+Math.round(v/1000)+'k':'—'}</div></div>`;
+    return`<div class="month-cell"><div class="mn">${mesCorto(m)}</div><div class="mv ${ok?(v>400000?'red':''):''}">${ok?'$'+Math.round(v/1000)+'k':'—'}</div></div>`;
   }).join('');
   const activos=MESES.filter(m=>mesesU.includes(m));
+  const activosCorto=activos.map(m=>mesCorto(m));
   const ds=CATS.map((c,i)=>({label:c,backgroundColor:CAT_COLORS[i],data:activos.map(m=>gastos.filter(g=>g.mesImp===m&&g.cat===c&&g.mov==='Gasto').reduce((a,g)=>a+g.monto,0))}));
   if(charts.anual)charts.anual.destroy();
-  charts.anual=new Chart(document.getElementById('chart-anual'),{type:'bar',data:{labels:activos,datasets:ds},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{stacked:true,ticks:{autoSkip:false,font:{size:11}}},y:{stacked:true,ticks:{callback:v=>'$'+Math.round(v/1000)+'k',font:{size:10}},grid:{color:'rgba(128,128,128,0.1)'}}}}});
+  charts.anual=new Chart(document.getElementById('chart-anual'),{type:'bar',data:{labels:activosCorto,datasets:ds},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{stacked:true,ticks:{autoSkip:false,font:{size:11}}},y:{stacked:true,ticks:{callback:v=>'$'+Math.round(v/1000)+'k',font:{size:10}},grid:{color:'rgba(128,128,128,0.1)'}}}}});
   document.getElementById('legend-anual').innerHTML=CATS.map((c,i)=>`<span class="li"><span class="ld" style="background:${CAT_COLORS[i]}"></span>${c}</span>`).join('');
 }
 
