@@ -341,7 +341,7 @@ function airtableToLocal(r){
     monto:parseFloat(f['Monto'])||0,cat:f['Categoria']||'',rubro:f['Rubro']||'',
     tags:f['Tags']?f['Tags'].split(',').map(t=>t.trim()).filter(Boolean):[],
     tipo:f['Tipo de gasto']||'',forma:f['Forma']||'',persona:f['Persona']||'',
-    estado:f['Pagado']?'Pagado':'Pendiente',mov:f['Tipo de movimiento']||'Gasto',
+    estado:f['Pago']?'Pagado':'Pendiente',mov:f['Tipo de movimiento']||'Gasto',
     cuotas:parseInt(f['Cuotas'])||1,cuotaN:parseInt(f['Cuota N'])||1,
     repId:f['RepId']||null,repInfl:f['AjusteInflacion']||false};
 }
@@ -349,7 +349,7 @@ function airtableToLocal(r){
 function buildAirtableRecord(g){
   return{'Descripcion de gasto':g.desc,'Fecha':g.fecha,'Mes':g.mesImp,'Monto':g.monto,
     'Categoria':g.cat,'Rubro':g.rubro,'Tags':(g.tags||[]).join(', '),
-    'Tipo de gasto':g.tipo,'Forma':g.forma,'Persona':g.persona,'Pagado':g.estado==='Pagado',
+    'Tipo de gasto':g.tipo,'Forma':g.forma,'Persona':g.persona,'Pago':g.estado==='Pagado',
     'Tipo de movimiento':g.mov,'Cuotas':g.cuotas,'Cuota N':g.cuotaN,'RepId':g.repId||'','AjusteInflacion':g.repInfl||false};
 }
 
